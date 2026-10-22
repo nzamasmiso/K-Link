@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{{ business.name }} | K-Link</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+<body>
+<header class="topbar"><a class="brand" href="/"><span class="brand-mark">K</span><span>K-Link</span></a><nav class="desktop-nav"><a href="/">Discover</a><a href="/#how-it-works">How it works</a></nav><a class="business-cta" href="/#businesses">Explore businesses <span>↗</span></a></header>
+<main class="detail-main">
+  <a href="/" class="back-link">← Back to local businesses</a>
+  <div class="detail-layout">
+    <div class="detail-photo"><img src="{{ business.image }}" alt="{{ business.name }}"></div>
+    <section class="detail-content">
+      <span class="kicker">{{ business.category }} · {{ business.area }}</span>
+      <h1>{{ business.name }}</h1>
+      <p class="detail-description">{{ business.description }}</p>
+      <div class="detail-facts"><div><span>LOCATION</span><strong>{{ business.address }}</strong></div><div><span>PRICE GUIDE</span><strong>{{ business.price }}</strong></div><div><span>STATUS</span><strong>Sample listing</strong></div></div>
+      {% if business.order_ahead %}
+      <div class="order-panel"><h2>Order ahead</h2><p>Ordering will be connected when the business dashboard and order workflow are implemented.</p><a class="search-button inline-button" href="mailto:hello@k-link.example?subject=K-Link%20order%20enquiry">Contact business <span>→</span></a></div>
+      {% else %}
+      <div class="order-panel"><h2>Plan your visit</h2><p>Contact details and opening hours will appear here once this business has completed its profile.</p><a class="search-button inline-button" href="https://www.openstreetmap.org/search?query={{ business.address|urlencode }}" target="_blank" rel="noopener">Find directions <span>↗</span></a></div>
+      {% endif %}
+      <p class="demo-note">Demo content: this is a sample listing, not a verified real business.</p>
+    </section>
+  </div>
+</main>
+<footer class="footer"><a class="brand" href="/"><span class="brand-mark">K</span><span>K-Link</span></a><span>Find Local. Order Ahead. Support Your Community.</span><span>© 2026 K-Link</span></footer>
+</body></html>

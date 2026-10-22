@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Discover local kota shops, shisanyamas, butcheries, barbershops, salons and more with K-Link.">
+  <title>K-Link | Find Local. Order Ahead.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/" aria-label="K-Link home"><span class="brand-mark">K</span><span>K-Link</span></a>
+  <nav class="desktop-nav"><a href="#discover">Discover</a><a href="#how-it-works">How it works</a><a href="#businesses">For businesses</a></nav>
+  <a class="business-cta" href="#businesses">List your business <span>↗</span></a>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-content">
+      <div class="eyebrow"><span class="live-dot"></span> YOUR NEIGHBOURHOOD, CONNECTED</div>
+      <h1>Good things<br>are <span class="accent">closer.</span></h1>
+      <p class="hero-copy">Find the local spots you love. Browse menus, check services and order ahead — all from one place.</p>
+      <form class="search-panel" action="/" method="get">
+        <label class="search-field"><span class="field-icon">⌕</span><input type="search" name="q" value="{{ query }}" placeholder="Kota, barber, shisanyama..." aria-label="Search local businesses"></label>
+        <label class="select-field"><span>⌖</span><select name="area" aria-label="Choose area">{% for a in areas %}<option value="{{ a }}" {% if area == a %}selected{% endif %}>{{ a }}</option>{% endfor %}</select></label>
+        <input type="hidden" name="category" value="{{ category }}">
+        <button type="submit" class="search-button">Find local <span>→</span></button>
+      </form>
+      <div class="hero-note"><span class="avatar-stack"><i>K</i><i>S</i><i>+</i></span><span>Support the businesses around you.</span></div>
+    </div>
+    <div class="hero-visual">
+      <div class="visual-photo photo-main"><img src="https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1100&q=85" alt="A welcoming local restaurant"></div>
+      <div class="floating-card map-card"><div class="map-mini"><span class="pin pin-one">●</span><span class="pin pin-two">●</span><span class="pin pin-three">●</span><span class="map-road road-one"></span><span class="map-road road-two"></span></div><div><strong>Local favourites</strong><small>Right around the corner</small></div></div>
+      <div class="floating-card order-card"><span class="order-icon">✓</span><div><strong>Order ahead</strong><small>Skip the long wait</small></div></div>
+      <div class="hero-stamp">LOCAL<br>IS <span>LOVELY.</span></div>
+    </div>
+  </section>
+
+  <section class="category-section" id="discover">
+    <div class="section-heading"><div><span class="kicker">EXPLORE YOUR AREA</span><h2>What are you looking for?</h2></div><span class="section-side-note">Your local guide, all in one place.</span></div>
+    <div class="category-list">
+      {% set category_items = [('Kota Shop','🍔'),('Shisanyama','🔥'),('Butchery','🥩'),('Barbershop','💈'),('Salon','✂️'),('Tavern','🍹')] %}
+      {% for label, emoji in category_items %}
+      <a class="category-chip {% if category == label %}active{% endif %}" href="/?category={{ label|urlencode }}&area={{ area|urlencode }}"><span class="category-emoji">{{ emoji }}</span><span>{{ label }}</span><span class="chip-arrow">↗</span></a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="business-section" id="businesses">
+    <div class="section-heading business-heading"><div><span class="kicker">GOOD PEOPLE. GREAT PLACES.</span><h2>Find your new regular.</h2><p class="section-description">Discover independent businesses and keep your community thriving.</p></div><span class="result-count">{{ businesses|length }} places to explore</span></div>
+    <div class="filter-row">
+      <div class="filter-pills">{% for c in categories %}<a class="filter-pill {% if category == c %}selected{% endif %}" href="/?category={{ c|urlencode }}&area={{ area|urlencode }}&q={{ query|urlencode }}">{{ c }}</a>{% endfor %}</div>
+      <a class="map-link" href="https://www.openstreetmap.org/" target="_blank" rel="noopener">Explore map <span>↗</span></a>
+    </div>
+    <div class="business-grid">
+      {% for b in businesses %}
+      {% set business_id = loop.index %}
+      <article class="business-card">
+        <a class="business-image" href="/business/{{ business_id }}"><img src="{{ b.image }}" alt="{{ b.name }}" loading="lazy"><span class="type-tag">{{ b.category }}</span><button class="save-button" type="button" aria-label="Save {{ b.name }}" onclick="event.preventDefault(); this.classList.toggle('saved'); this.textContent=this.classList.contains('saved')?'♥':'♡'">♡</button></a>
+        <div class="business-info">
+          <div class="business-title-row"><h3><a href="/business/{{ business_id }}">{{ b.name }}</a></h3><span class="rating">★ <small>{{ b.rating }}</small></span></div>
+          <p class="business-description">{{ b.description }}</p>
+          <div class="business-meta"><span>⌖ {{ b.area }}</span><span>{{ b.price }}</span></div>
+          <div class="card-bottom"><a class="text-link" href="/business/{{ business_id }}">View details <span>→</span></a>{% if b.order_ahead %}<span class="order-badge"><span></span> Order ahead</span>{% else %}<span class="discover-badge">Discover</span>{% endif %}</div>
+        </div>
+      </article>
+      {% else %}
+      <div class="empty-state"><div>⌕</div><h3>No places found just yet</h3><p>Try another search or choose a different area.</p><a href="/">Clear filters →</a></div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="how-section" id="how-it-works">
+    <div class="how-intro"><span class="kicker">SIMPLE AS THAT</span><h2>Your local life,<br><span class="accent">made easier.</span></h2><p>Less searching. Less waiting. More supporting the people who make your neighbourhood what it is.</p></div>
+    <div class="steps">
+      <div class="step"><span class="step-number">01</span><div class="step-icon">⌕</div><h3>Find your spot</h3><p>Search local businesses by category, name or area.</p></div>
+      <div class="step"><span class="step-number">02</span><div class="step-icon">▤</div><h3>Browse or order</h3><p>Check menus, prices and services before you go.</p></div>
+      <div class="step"><span class="step-number">03</span><div class="step-icon">↗</div><h3>Show up smarter</h3><p>When available, order ahead and collect at the agreed time.</p></div>
+    </div>
+  </section>
+
+  <section class="owner-banner">
+    <div><span class="kicker">OWN A LOCAL BUSINESS?</span><h2>Your next customer<br>is just around the corner.</h2><p>Put your business on the map and help more people discover what you do.</p></div>
+    <a href="mailto:hello@k-link.example?subject=List%20my%20business%20on%20K-Link" class="owner-button">Get your business listed <span>→</span></a>
+    <div class="banner-orb orb-one"></div><div class="banner-orb orb-two"></div>
+  </section>
+</main>
+
+<footer class="footer"><a class="brand" href="/"><span class="brand-mark">K</span><span>K-Link</span></a><span>Find Local. Order Ahead. Support Your Community.</span><span>© 2026 K-Link</span></footer>
+</body>
+</html>
